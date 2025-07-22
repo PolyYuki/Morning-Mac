@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>朝マックゲーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+        }
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 450px;
+            background: linear-gradient(to bottom, #a8d8ea 0%, #d5eaf0 70%);
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        #game-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background-color: #96c8a0;
+        }
+        #timer {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        #description {
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+            width: 100%;
+            text-align: center;
+        }
+        #bed {
+            position: absolute;
+            right: 60px;
+            bottom: 70px;
+            width: 110px;
+            height: 70px;
+            background-color: #d8b2ff;
+            border: 3px solid #a58bb8;
+            border-radius: 10px 10px 5px 5px;
+            z-index: 1;
+        }
+        #bed::before { /* Pillow */
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 25px;
+            background-color: #fff;
+            border: 2px solid #a58bb8;
+        }
+        #girl {
+            position: absolute;
+            right: 80px;
+            bottom: 80px;
+            font-size: 45px;
+            transition: all 0.2s ease-in-out;
+            z-index: 2;
+            transform-origin: bottom center;
+        }
+        #shop {
+            position: absolute;
+            left: 50px;
+            bottom: 70px;
+            width: 130px;
+            height: 150px;
+            background-color: #e63946;
+            border: 4px solid #a02a33;
+            border-radius: 15px 15px 5px 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            color: #ffdd00;
+            font-size: 90px;
+            z-index: 1;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.1);
+        }
+        #shop::before { /* Roof */
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: -4px;
+            width: calc(100% + 8px);
+            height: 30px;
+            background-color: #c93e49;
+            border: 4px solid #a02a33;
+            border-radius: 10px 10px 0 0;
+        }
+        #action-button, #restart-button {
+            position: absolute;
+            left: 50%;
+            border: none;
+            border-radius: 50px;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.15s ease-in-out;
+        }
+        #action-button {
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 18px 40px;
+            font-size: 22px;
+            background: linear-gradient(145deg, #ff99a2, #e67c85);
+        }
+        #restart-button {
+            bottom: 20px;
+            transform: translateX(-50%);
+            padding: 12px 25px;
+            font-size: 18px;
+            background: linear-gradient(145deg, #a8d8ea, #82c2d8);
+            z-index: 5;
+        }
+        #action-button:hover, #restart-button:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+        }
+        #restart-button:hover {
+             transform: translateX(-50%) scale(1.05);
+        }
+        #action-button:active, #restart-button:active {
+            transform: translate(-50%, -50%) scale(0.95);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+         #restart-button:active {
+             transform: translateX(-50%) scale(0.95);
+        }
+        #message {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 42px;
+            font-weight: 700;
+            color: #e63946;
+            text-align: center;
+            z-index: 10;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0) rotate(0); }
+            25% { transform: translate(1px, -1px) rotate(-2deg); }
+            50% { transform: translate(-1px, 1px) rotate(2deg); }
+            75% { transform: translate(1px, 1px) rotate(-2deg); }
+        }
+        .is-waking-up {
+            animation: shake 0.1s linear 3;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="timer">10:00am</div>
+    <div id="description">あーちゃんを起こして朝マックを食べさせてあげよう！ボタンを連打してね！</div>
+    <div id="bed"></div>
+    <div id="girl">😴</div>
+    <div id="shop">M</div>
+    <div id="message"></div>
+    <button id="action-button">スタート</button>
+    <button id="restart-button" style="display: none;">もう一度やる</button>
+</div>
+
+<script>
+    const girl = document.getElementById('girl');
+    const shop = document.getElementById('shop');
+    const actionButton = document.getElementById('action-button');
+    const restartButton = document.getElementById('restart-button');
+    const timerDisplay = document.getElementById('timer');
+    const messageDisplay = document.getElementById('message');
+    const gameContainer = document.getElementById('game-container');
+
+    let gameState = 'initial'; // initial, wakingUp, walking, gameOver
+    let wakeUpClicks = 0;
+    let walkSteps = 0;
+    let timerSeconds = 0;
+    let timerInterval;
+
+    const WAKE_UP_TARGET = 30;
+    const WALK_TARGET = 100;
+    const TIME_LIMIT = 30; // 30 seconds
+
+    function updateTimer() {
+        timerSeconds++;
+        const minutes = String(timerSeconds).padStart(2, '0');
+        timerDisplay.textContent = `10:${minutes}am`;
+
+        if (timerSeconds >= TIME_LIMIT) {
+            endGame(false); // Lose
+        }
+    }
+
+    function moveGirl() {
+        walkSteps++;
+        const containerWidth = gameContainer.offsetWidth;
+        const girlWidth = girl.offsetWidth;
+        const shopWidth = shop.offsetWidth;
+        
+        const startRight = 70; // Initial position of the girl
+        const endRight = containerWidth - shop.offsetLeft - shopWidth + (girlWidth/2);
+        const totalDistance = endRight - startRight;
+        
+        const newRight = startRight + (totalDistance * (walkSteps / WALK_TARGET));
+        girl.style.right = `${newRight}px`;
+
+        if (walkSteps >= WALK_TARGET) {
+            endGame(true); // Win
+        }
+    }
+
+    function endGame(isWin) {
+        if (gameState === 'gameOver') return;
+
+        clearInterval(timerInterval);
+        gameState = 'gameOver';
+        actionButton.style.display = 'none';
+        restartButton.style.display = 'block';
+
+        if (isWin) {
+            messageDisplay.textContent = '朝マック食べたどん';
+            girl.textContent = '😋🍔'; // Eating face with burger
+        } else {
+            messageDisplay.textContent = '間に合わなかったどん';
+            girl.textContent = '😭';
+        }
+    }
+
+    function handleActionButtonClick() {
+        switch (gameState) {
+            case 'initial':
+                gameState = 'wakingUp';
+                actionButton.textContent = 'あーちゃん起きて！';
+                timerInterval = setInterval(updateTimer, 1000);
+                break;
+
+            case 'wakingUp':
+                wakeUpClicks++;
+                girl.classList.add('is-waking-up');
+                setTimeout(() => {
+                    girl.classList.remove('is-waking-up');
+                }, 300);
+
+                if (wakeUpClicks >= WAKE_UP_TARGET) {
+                    gameState = 'walking';
+                    actionButton.textContent = '朝マック！';
+                    girl.textContent = '👧'; // Awake girl
+                }
+                break;
+
+            case 'walking':
+                moveGirl();
+                break;
+        }
+    }
+
+    function resetGame() {
+        gameState = 'initial';
+        wakeUpClicks = 0;
+        walkSteps = 0;
+        timerSeconds = 0;
+        
+        clearInterval(timerInterval);
+
+        timerDisplay.textContent = '10:00am';
+        messageDisplay.textContent = '';
+        girl.style.right = '70px';
+        girl.textContent = '😴';
+
+        actionButton.textContent = 'スタート';
+        actionButton.style.display = 'block';
+        restartButton.style.display = 'none';
+    }
+
+    actionButton.addEventListener('click', handleActionButtonClick);
+    restartButton.addEventListener('click', resetGame);
+
+</script>
+
+</body>
+</html>
