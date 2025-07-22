@@ -2,119 +2,146 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>朝マックゲーム</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f8ff;
+            touch-action: manipulation; /* Disable double-tap to zoom */
+        }
+
         body {
             font-family: 'M PLUS Rounded 1c', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f8ff;
         }
+
+        #game-wrapper {
+            width: 100%;
+            max-width: 95vh;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         #game-container {
             position: relative;
-            width: 800px;
-            height: 450px;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(to bottom, #a8d8ea 0%, #d5eaf0 70%);
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-radius: 2.5vmin;
+            box-shadow: 0 1.25vmin 2.5vmin rgba(0,0,0,0.1);
             overflow: hidden;
         }
-        #game-container::after {
+
+        #game-container::after { /* Ground */
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 80px;
+            height: 17.7%; /* 80px / 450px */
             background-color: #96c8a0;
+            z-index: 0;
         }
+
         #timer {
             position: absolute;
-            top: 15px;
+            top: 3.3%; /* 15px / 450px */
             left: 50%;
             transform: translateX(-50%);
-            font-size: 28px;
             font-weight: 700;
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            font-size: clamp(12px, 4vmin, 28px);
         }
+
         #description {
             position: absolute;
-            top: 55px;
+            top: 12.2%; /* 55px / 450px */
             left: 50%;
             transform: translateX(-50%);
-            font-size: 16px;
             color: #fff;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
-            width: 100%;
+            width: 90%;
             text-align: center;
+            font-size: clamp(8px, 2.2vmin, 16px);
         }
+
         #bed {
             position: absolute;
-            right: 60px;
-            bottom: 70px;
-            width: 110px;
-            height: 70px;
+            right: 7.5%; /* 60px / 800px */
+            bottom: 15.5%; /* 70px / 450px */
+            width: 13.75%; /* 110px / 800px */
+            height: 15.5%; /* 70px / 450px */
             background-color: #d8b2ff;
-            border: 3px solid #a58bb8;
-            border-radius: 10px 10px 5px 5px;
+            border: 0.375vmin solid #a58bb8;
+            border-radius: 1.25vmin 1.25vmin 0.625vmin 0.625vmin;
             z-index: 1;
         }
+
         #bed::before { /* Pillow */
             content: '';
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 40px;
-            height: 25px;
+            top: 14.2%; /* 10px / 70px */
+            right: 9%; /* 10px / 110px */
+            width: 36.3%; /* 40px / 110px */
+            height: 35.7%; /* 25px / 70px */
             background-color: #fff;
-            border: 2px solid #a58bb8;
+            border-radius: 0.625vmin;
+            border: 0.25vmin solid #a58bb8;
         }
+
         #girl {
             position: absolute;
-            right: 80px;
-            bottom: 80px;
-            font-size: 45px;
-            transition: all 0.2s ease-in-out;
+            /* right is set by JS */
+            bottom: 17.7%; /* 80px / 450px */
+            font-size: clamp(20px, 5.6vmin, 45px);
+            transition: right 0.2s linear;
             z-index: 2;
             transform-origin: bottom center;
         }
+
         #shop {
             position: absolute;
-            left: 50px;
-            bottom: 70px;
-            width: 130px;
-            height: 150px;
+            left: 6.25%; /* 50px / 800px */
+            bottom: 15.5%; /* 70px / 450px */
+            width: 16.25%; /* 130px / 800px */
+            height: 33.3%; /* 150px / 450px */
             background-color: #e63946;
-            border: 4px solid #a02a33;
-            border-radius: 15px 15px 5px 5px;
+            border: 0.5vmin solid #a02a33;
+            border-radius: 1.875vmin 1.875vmin 0.625vmin 0.625vmin;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: 700;
             color: #ffdd00;
-            font-size: 90px;
+            font-size: clamp(40px, 11.25vmin, 90px);
             z-index: 1;
-            box-shadow: 5px 5px 10px rgba(0,0,0,0.1);
+            box-shadow: 0.625vmin 0.625vmin 1.25vmin rgba(0,0,0,0.1);
         }
+
         #shop::before { /* Roof */
             content: '';
             position: absolute;
-            top: -30px;
-            left: -4px;
-            width: calc(100% + 8px);
-            height: 30px;
+            top: -20%; /* -30px / 150px */
+            left: -3%; /* -4px / 130px */
+            width: 106.15%; /* (130+8) / 130 */
+            height: 20%; /* 30px / 150px */
             background-color: #c93e49;
-            border: 4px solid #a02a33;
-            border-radius: 10px 10px 0 0;
+            border: 0.5vmin solid #a02a33;
+            border-radius: 1.25vmin 1.25vmin 0 0;
         }
+
         #action-button, #restart-button {
             position: absolute;
             left: 50%;
@@ -124,50 +151,57 @@
             font-weight: 700;
             color: white;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 0.5vmin 0.75vmin rgba(0,0,0,0.1);
             transition: all 0.15s ease-in-out;
+            white-space: nowrap;
         }
+
         #action-button {
             top: 50%;
             transform: translate(-50%, -50%);
-            padding: 18px 40px;
-            font-size: 22px;
+            padding: 2.25vmin 5vmin;
+            font-size: clamp(12px, 2.75vmin, 22px);
             background: linear-gradient(145deg, #ff99a2, #e67c85);
         }
+
         #restart-button {
-            bottom: 20px;
+            bottom: 4.4%; /* 20px / 450px */
             transform: translateX(-50%);
-            padding: 12px 25px;
-            font-size: 18px;
+            padding: 1.5vmin 3.125vmin;
+            font-size: clamp(10px, 2.25vmin, 18px);
             background: linear-gradient(145deg, #a8d8ea, #82c2d8);
             z-index: 5;
         }
+
         #action-button:hover, #restart-button:hover {
             transform: translate(-50%, -50%) scale(1.05);
-            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 0.75vmin 1.25vmin rgba(0,0,0,0.15);
         }
         #restart-button:hover {
              transform: translateX(-50%) scale(1.05);
         }
         #action-button:active, #restart-button:active {
             transform: translate(-50%, -50%) scale(0.95);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 0.25vmin 0.5vmin rgba(0,0,0,0.1);
         }
          #restart-button:active {
              transform: translateX(-50%) scale(0.95);
         }
+
         #message {
             position: absolute;
             top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 42px;
             font-weight: 700;
             color: #e63946;
             text-align: center;
             z-index: 10;
             text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+            font-size: clamp(20px, 5.25vmin, 42px);
+            width: 90%;
         }
+
         @keyframes shake {
             0%, 100% { transform: translate(0, 0) rotate(0); }
             25% { transform: translate(1px, -1px) rotate(-2deg); }
@@ -181,27 +215,31 @@
 </head>
 <body>
 
-<div id="game-container">
-    <div id="timer">10:00am</div>
-    <div id="description">あーちゃんを起こして朝マックを食べさせてあげよう！ボタンを連打してね！</div>
-    <div id="bed"></div>
-    <div id="girl">😴</div>
-    <div id="shop">M</div>
-    <div id="message"></div>
-    <button id="action-button">スタート</button>
-    <button id="restart-button" style="display: none;">もう一度やる</button>
+<div id="game-wrapper">
+    <div id="game-container">
+        <div id="timer">10:00am</div>
+        <div id="description">あーちゃんを起こして朝マックを食べさせてあげよう！ボタンを連打してね！</div>
+        <div id="bed"></div>
+        <div id="girl">😴</div>
+        <div id="shop">M</div>
+        <div id="message"></div>
+        <button id="action-button">スタート</button>
+        <button id="restart-button" style="display: none;">もう一度やる</button>
+    </div>
 </div>
 
 <script>
     const girl = document.getElementById('girl');
-    const shop = document.getElementById('shop');
     const actionButton = document.getElementById('action-button');
     const restartButton = document.getElementById('restart-button');
     const timerDisplay = document.getElementById('timer');
     const messageDisplay = document.getElementById('message');
-    const gameContainer = document.getElementById('game-container');
 
-    let gameState = 'initial'; // initial, wakingUp, walking, gameOver
+    // Define positions in percentages for responsive movement
+    const GIRL_START_RIGHT = 10; // Corresponds to 'right: 10%'
+    const GIRL_END_RIGHT = 78;   // The target 'right' percentage near the shop
+
+    let gameState = 'initial';
     let wakeUpClicks = 0;
     let walkSteps = 0;
     let timerSeconds = 0;
@@ -209,7 +247,7 @@
 
     const WAKE_UP_TARGET = 30;
     const WALK_TARGET = 100;
-    const TIME_LIMIT = 30; // 30 seconds
+    const TIME_LIMIT = 30;
 
     function updateTimer() {
         timerSeconds++;
@@ -223,16 +261,9 @@
 
     function moveGirl() {
         walkSteps++;
-        const containerWidth = gameContainer.offsetWidth;
-        const girlWidth = girl.offsetWidth;
-        const shopWidth = shop.offsetWidth;
-        
-        const startRight = 70; // Initial position of the girl
-        const endRight = containerWidth - shop.offsetLeft - shopWidth + (girlWidth/2);
-        const totalDistance = endRight - startRight;
-        
-        const newRight = startRight + (totalDistance * (walkSteps / WALK_TARGET));
-        girl.style.right = `${newRight}px`;
+        const totalDistance = GIRL_END_RIGHT - GIRL_START_RIGHT;
+        const newRight = GIRL_START_RIGHT + (totalDistance * (walkSteps / WALK_TARGET));
+        girl.style.right = `${newRight}%`;
 
         if (walkSteps >= WALK_TARGET) {
             endGame(true); // Win
@@ -249,7 +280,7 @@
 
         if (isWin) {
             messageDisplay.textContent = '朝マック食べたどん';
-            girl.textContent = '😋🍔'; // Eating face with burger
+            girl.textContent = '😋🍔';
         } else {
             messageDisplay.textContent = '間に合わなかったどん';
             girl.textContent = '😭';
@@ -274,7 +305,7 @@
                 if (wakeUpClicks >= WAKE_UP_TARGET) {
                     gameState = 'walking';
                     actionButton.textContent = '朝マック！';
-                    girl.textContent = '👧'; // Awake girl
+                    girl.textContent = '👧';
                 }
                 break;
 
@@ -294,13 +325,16 @@
 
         timerDisplay.textContent = '10:00am';
         messageDisplay.textContent = '';
-        girl.style.right = '70px';
+        girl.style.right = `${GIRL_START_RIGHT}%`;
         girl.textContent = '😴';
 
         actionButton.textContent = 'スタート';
         actionButton.style.display = 'block';
         restartButton.style.display = 'none';
     }
+
+    // Initial setup
+    resetGame();
 
     actionButton.addEventListener('click', handleActionButtonClick);
     restartButton.addEventListener('click', resetGame);
